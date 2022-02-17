@@ -16,6 +16,25 @@ const tasks = [
     },
 ]
 
+let isNightTheme = false
+
+const nightTheme = () => {
+    const body = document.querySelector('body')
+    body.style.background = '#24292E'
+    body.style.setProperty('--checkbox-border-color', '#ffffff')
+    body.style.color = '#ffffff'
+    const createTaskBlockInput = document.querySelector('.create-task-block__input')
+    createTaskBlockInput.style.background = '#B0C4DE'
+    const taskItem = document.querySelectorAll('.task-item')
+    for (const elem of taskItem) {
+        elem.style.color = '#ffffff'
+    }
+    const allButtons = document.querySelectorAll('button')
+    for (const button of allButtons) {
+        button.style.border = '1px solid #ffffff'
+    }
+}
+
 function addTaskItem (item) {
 const tasksList = document.querySelector('.tasks-list')
 const taskItem = document.createElement('div')
@@ -55,13 +74,11 @@ tasks.forEach (item => addTaskItem(item))
 
 const createTaskForm = document.querySelector('.create-task-block')
 createTaskForm.addEventListener('submit', (event) => {
-
     event.preventDefault()
     console.log(event)
     const { target } = event
     const taskNameInput = target.taskName
-    const inputValue = taskNameInput.value
-    console.log(`inputValue`, inputValue)
+    const inputValue = taskNameInput.value.trim()
     let isError = false
     const errorMessageBlock = document.createElement('span')
     const createTaskBlock = document.querySelector('.create-task-block')
@@ -71,7 +88,6 @@ createTaskForm.addEventListener('submit', (event) => {
             errorMessageBlock.innerText = `Задача с таким названием уже существует.`
             createTaskForm.insertAdjacentElement('afterbegin', errorMessageBlock)
             isError = true
-            console.log(`error`, errorMessageBlock)
         }
     }
     if(!inputValue) {
@@ -85,12 +101,15 @@ createTaskForm.addEventListener('submit', (event) => {
             completed: false,
             text: inputValue
         })
+        addTaskItem(tasks[tasks.length - 1])
+        if(isNightTheme) {
+            nightTheme()
+        }
         console.log(tasks)
-        const clearTasksList = document.querySelector('.tasks-list')
-        clearTasksList.innerHTML = ''
-        tasks.forEach (item => addTaskItem(item))
         const isErrorMessageBlock = document.querySelector('.error-message-block')
-        isErrorMessageBlock.remove()
+        if(isErrorMessageBlock) {
+            isErrorMessageBlock.remove()
+        }
     }
 })
 
@@ -134,23 +153,14 @@ tasksList.addEventListener('click', (event) => {
         deleteModalButtons.append(deleteModalConfirmButton)
     }
 })
-let isNightTheme = false
+
 document.addEventListener('keydown', event => {
     if(event.code === 'Tab') {
         isNightTheme = !isNightTheme
         console.log(isNightTheme)
         if(isNightTheme) {
             console.log(isNightTheme)
-            const body = document.querySelector('body')
-            body.style.background = '#24292E'
-            const taskItem = document.querySelectorAll('.task-item')
-            for (const elem of taskItem) {
-                elem.style.color = '#ffffff'
-            }
-            const allButtons = document.querySelectorAll('button')
-            for (const button of allButtons) {
-                button.style.border = '1px solid #ffffff'
-            }
+            nightTheme()
         } else {
             const body = document.querySelector('body')
             body.style.background = 'initial'
